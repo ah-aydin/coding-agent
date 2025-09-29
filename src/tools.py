@@ -31,13 +31,6 @@ def define_function_tool(
 
 TOOLS = [
     define_function_tool(
-        'get_weather',
-        'Get the weather of a given city',
-        [
-            ToolParameter(name='city', type='string', description='The city for which to check the weather for', required=False)
-        ]
-    ),
-    define_function_tool(
         'read_file',
         "Read the contents of a given relative file path. Use this when you want to see what's inside a file. Do not use this with directory names.",
         [
@@ -45,9 +38,6 @@ TOOLS = [
         ]
     )
 ]
-
-def get_weather(city):
-    return f'The weather in ${city} is 28 degrees'
 
 def read_file(args):
     print('The arguments to read_file are:', args)

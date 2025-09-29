@@ -15,15 +15,6 @@ class GPTClient:
         for item in response.output:
             if item.type == 'function_call':
                 had_tool_calls = True
-                if item.name == 'get_weather':
-                    weather = tools.get_weather(json.loads(item.arguments))
-                    self.conversation.append({
-                        'type': 'function_call_output',
-                        'call_id': item.call_id,
-                        'output': json.dumps({
-                            'weather': weather
-                        })
-                    })
                 if item.name == 'read_file':
                     file_contents = tools.read_file(json.loads(item.arguments))
                     self.conversation.append({
