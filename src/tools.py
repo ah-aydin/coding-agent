@@ -31,3 +31,13 @@ def define_function_tool(
 
 def get_weather(city):
     return f'The weather in ${city} is 28 degrees'
+
+TOOLS = [
+    define_function_tool(
+        'get_weather',
+        'Get the weather of a given city',
+        [
+            ToolParameter(name='city', type='string', description='The city for which to check the weather for', required=False)
+        ]
+    )
+]
