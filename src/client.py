@@ -17,16 +17,21 @@ class GPTClient:
                 had_tool_calls = True
                 tool_args = json.loads(item.arguments)
                 print(f'\n\u001b[92mtool\u001b[0m: {item.name}({tool_args})\n')
-                # tool_output = tools.TOOLS.(item.name).func(tool_args)
+
                 tool = tools.TOOL_FUNCS.get(item.name)
                 if tool is None:
                     continue
-                tool_output = tool(tool_args)
-                self.conversation.append({
-                    'type': 'function_call_output',
-                    'call_id': item.call_id,
-                    'output': json.dumps(tool_output)
-                })
+
+                try:
+                    tool_output = tool(tool_args)
+                    self.conversation.append({
+                        'type': 'function_call_output',
+                        'call_id': item.call_id,
+                        'output': json.dumps(tool_output)
+                    })
+                except Exception as e:
+                    print(f'Tool call failed! {str(e)}')
+                    continue
             model_output = response.output_text
             self._print_GPT(model_output)
 
