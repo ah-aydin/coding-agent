@@ -1,8 +1,9 @@
 from client import GPTClient
+import tools
 
 def main():
+    tools.init()
     print('Chat with GPT (use ctrl-c to quit)')
-
     client = GPTClient()
     try:
         while True:

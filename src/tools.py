@@ -1,4 +1,8 @@
 from dataclasses import dataclass
+from typing import Callable
+
+TOOL_FUNCS: dict[str, Callable[[dict], dict]] = {}
+TOOLS = []
 
 @dataclass
 class ToolParameter:
@@ -10,9 +14,11 @@ class ToolParameter:
 def define_function_tool(
     function_name: str,
     description: str,
+    tool_func: Callable[[dict], dict],
     parameters: list[ToolParameter]
 ):
-    return {
+    TOOL_FUNCS[function_name] = tool_func
+    TOOLS.append({
         'type': 'function',
         'name': function_name,
         'description': description,
@@ -27,7 +33,7 @@ def define_function_tool(
             },
             'required': [param.name for param in parameters if param.required == True]
         }
-    }
+    })
 
 def read_file(args):
     file_path = args['file_path']
@@ -37,16 +43,12 @@ def read_file(args):
         file_content = '\n'.join(lines)
     return { 'file_content': file_content }
 
-TOOL_FUNCS = {
-    'read_file': read_file
-}
-
-TOOLS = [
+def init():
     define_function_tool(
         'read_file',
         "Read the contents of a given relative file path. Use this when you want to see what's inside a file. Do not use this with directory names.",
+        read_file,
         [
             ToolParameter(name='file_path', type='string', description='Relative file path of the file to read')
         ]
     )
-]
