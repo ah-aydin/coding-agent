@@ -15,16 +15,18 @@ class GPTClient:
         for item in response.output:
             if item.type == 'function_call':
                 had_tool_calls = True
-                if item.name == 'read_file':
-                    file_contents = tools.read_file(json.loads(item.arguments))
-                    self.conversation.append({
-                        'type': 'function_call_output',
-                        'call_id': item.call_id,
-                        'output': json.dumps({
-                            'file_contents': file_contents
-                        })
-                    })
-                continue
+                tool_args = json.loads(item.arguments)
+                print(f'\n\u001b[92mtool\u001b[0m: {item.name}({tool_args})\n')
+                # tool_output = tools.TOOLS.(item.name).func(tool_args)
+                tool = tools.TOOL_FUNCS.get(item.name)
+                if tool is None:
+                    continue
+                tool_output = tool(tool_args)
+                self.conversation.append({
+                    'type': 'function_call_output',
+                    'call_id': item.call_id,
+                    'output': json.dumps(tool_output)
+                })
             model_output = response.output_text
             self._print_GPT(model_output)
 
@@ -58,4 +60,5 @@ class GPTClient:
 
 
     def _print_GPT(self, text):
+        if len(text) < 1: return
         print(f'\u001b[93mGPT\u001b[0m: {text}\n', end='')

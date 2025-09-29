@@ -8,9 +8,9 @@ class ToolParameter:
     required: bool = True
 
 def define_function_tool(
-        function_name: str,
-        description: str,
-        parameters: list[ToolParameter]
+    function_name: str,
+    description: str,
+    parameters: list[ToolParameter]
 ):
     return {
         'type': 'function',
@@ -29,6 +29,18 @@ def define_function_tool(
         }
     }
 
+def read_file(args):
+    file_path = args['file_path']
+    file_content = None
+    with open(file_path, 'r') as file:
+        lines = file.readlines()
+        file_content = '\n'.join(lines)
+    return { 'file_content': file_content }
+
+TOOL_FUNCS = {
+    'read_file': read_file
+}
+
 TOOLS = [
     define_function_tool(
         'read_file',
@@ -38,13 +50,3 @@ TOOLS = [
         ]
     )
 ]
-
-def read_file(args):
-    print('The arguments to read_file are:', args)
-    file_path = args['file_path']
-    file_content = None
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        file_content = '\n'.join(lines)
-    return file_content
-
