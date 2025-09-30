@@ -20,10 +20,12 @@ class GPTClient:
 
                 tool = tools.TOOL_FUNCS.get(item.name)
                 if tool is None:
+                    print(f'Failed to find tool with name: {item.name}')
                     continue
 
                 try:
                     tool_output = tool(tool_args)
+                    print(json.dumps(tool_output))
                     self.conversation.append({
                         'type': 'function_call_output',
                         'call_id': item.call_id,

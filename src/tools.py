@@ -40,8 +40,7 @@ def read_file(args):
     file_path = args['file_path']
     file_content = None
     with open(file_path, 'r') as file:
-        lines = file.readlines()
-        file_content = '\n'.join(lines)
+        file_content = file.read()
     return { 'file_content': file_content }
 
 def list_directory(args):
@@ -58,6 +57,26 @@ def list_directory(args):
         'files': files,
         'folders': folders,
     }
+
+def edit_file(args):
+    file_path = args['path']
+    new_str = args['new_str']
+
+    if os.path.isfile(file_path):
+        with open(file_path, 'w') as file:
+            file.write(new_str)
+        return {'status': 'REPLACED'}
+
+    with open(file_path, 'w') as file:
+        file.write(new_str)
+    return {'status': 'CREATED' }
+
+def delete_file(args):
+    file_path = args['path']
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        return {'status': 'SUCCESS'}
+    return {'status': 'FILE_NOT_FOUND'}
 
 def init():
     define_function_tool(
@@ -82,6 +101,40 @@ def init():
                 type='string',
                 description='Optional relative path to list files from. Defaults to current directory if not provided.',
                 required=False
+            )
+        ]
+    )
+    define_function_tool(
+        'edit_file',
+        """
+        Make edits to a text file. If the file does not exist, it will create it on the spot.
+        Replaces the contents of the entier file with `new_str`.
+        """,
+        edit_file,
+        [
+            ToolParameter(
+                name='path',
+                type='string',
+                description='Relative path to the file.'
+            ),
+            ToolParameter(
+                name='new_str',
+                type='string',
+                description='Text to replace the contents of the file'
+            )
+        ]
+    )
+    define_function_tool(
+        'delete_file',
+        """
+        Deletes a file given it's relative path
+        """,
+        delete_file,
+        [
+            ToolParameter(
+                name='path',
+                type='string',
+                description='Relative path to the file.'
             )
         ]
     )
