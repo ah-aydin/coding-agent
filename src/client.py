@@ -25,7 +25,6 @@ class GPTClient:
 
                 try:
                     tool_output = tool(tool_args)
-                    print(json.dumps(tool_output))
                     self.conversation.append({
                         'type': 'function_call_output',
                         'call_id': item.call_id,
@@ -63,8 +62,6 @@ class GPTClient:
             input=self.conversation,
             store=False
         )
-
-
 
     def _print_GPT(self, text):
         if len(text) < 1: return
